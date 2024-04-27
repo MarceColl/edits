@@ -38,14 +38,14 @@ ApplyPatch == \E patch \in patches:
 End == /\ operations = 0
        /\ UNCHANGED vars
 
-Step == \/ GeneratePatch
+Next == \/ GeneratePatch
         \/ ApplyPatch
         \/ End
         
-Spec == Init /\ [][Step]_vars /\ WF_vars(Step)
+Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
 
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Apr 27 07:03:19 CEST 2024 by marcecoll
+\* Last modified Sat Apr 27 07:07:38 CEST 2024 by marcecoll
 \* Created Fri Apr 05 23:18:28 CEST 2024 by marcecoll
