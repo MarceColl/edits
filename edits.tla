@@ -1,6 +1,6 @@
 ------------------------------- MODULE edits -------------------------------
 
-EXTENDS Sequences, Naturals
+EXTENDS Sequences, Naturals, TLC
 
 CONSTANT NULL
 VARIABLES operations, layer, start_marker, end_marker, patches, id_pool
@@ -28,11 +28,11 @@ ApplyPatch == \E patch \in patches:
                 /\ operations' = operations - 1
                 /\ patches' = patches \ { patch }
                 \* Typical linked list insertion
-                /\ layer' = [layer EXCEPT ![layer[patch.targetid].next].prev = patch.id,
-                                          ![patch.targetid].next = patch.id,
-                                          ![patch.id] = [prev  |-> patch.targetid, 
-                                                         value |-> patch.value, 
-                                                         next  |-> layer[patch.targetid].next] ]
+                /\ layer' = [x \in {patch.id} |-> [prev  |-> patch.targetid, 
+                                                   value |-> patch.value, 
+                                                   next  |-> layer[patch.targetid].next]] 
+                             @@ [layer EXCEPT ![layer[patch.targetid].next].prev = patch.id,
+                                              ![patch.targetid].next = patch.id]
                 /\ UNCHANGED << start_marker, end_marker, id_pool >>
                  
 End == /\ operations = 0
@@ -47,5 +47,5 @@ Spec == Init /\ [][Next]_vars /\ WF_vars(Next)
 
 =============================================================================
 \* Modification History
-\* Last modified Sat Apr 27 07:07:38 CEST 2024 by marcecoll
+\* Last modified Sat Apr 27 07:18:43 CEST 2024 by marcecoll
 \* Created Fri Apr 05 23:18:28 CEST 2024 by marcecoll
